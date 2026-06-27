@@ -94,9 +94,11 @@ Note the output: if `NO_DATA`, omit `--chart` from the render step.
 
 **7. Generate SVG graphics**
 ```
-python tools/generate_svg_graphics.py "$TOPIC"
+python tools/generate_svg_graphics.py "$TOPIC" --title "$SUBJECT_LINE"
 ```
 Output: `.tmp/svg_elements.json` — header banner, divider, and badge SVGs auto-themed by topic category.
+
+`$TOPIC` is used for theme detection only. `--title` sets the text displayed in the header banner — use the chosen subject line so the banner matches what the reader sees in their inbox. If `--title` is omitted, the topic string is used as a fallback (previous behavior).
 
 **8. Generate hero image (unless --no-images)**
 ```

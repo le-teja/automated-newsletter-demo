@@ -111,6 +111,8 @@ def main():
 
     # Infer topic from content or filename
     topic = content.get("topic", "")
+    # Use first subject line as the crisp banner/page title; fall back to topic
+    banner_title = (content.get("subject_lines") or [topic])[0] or topic
 
     svg = load_svg_elements(args.svg)
     hero_b64 = encode_image(args.hero)
@@ -130,6 +132,7 @@ def main():
 
     html = template.render(
         topic=topic,
+        banner_title=banner_title,
         variant=args.variant,
         preheader=content.get("preheader", ""),
         intro=content.get("intro", ""),

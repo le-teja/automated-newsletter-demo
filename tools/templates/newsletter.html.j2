@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>{{ topic }}</title>
+  <title>{{ banner_title }}</title>
   <style>
     /* Reset */
     body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
@@ -75,7 +75,7 @@
         {% if header_banner_png_b64 %}
         <tr>
           <td align="center" valign="top" width="600" style="padding:0;margin:0;line-height:0;font-size:0;border:0;">
-            <img src="data:image/png;base64,{{ header_banner_png_b64 }}" alt="{{ topic }}" width="600" height="120" style="display:block;width:100%;height:auto;border:0;outline:none;" />
+            <img src="data:image/png;base64,{{ header_banner_png_b64 }}" alt="{{ banner_title }}" width="600" height="120" style="display:block;width:100%;height:auto;border:0;outline:none;" />
           </td>
         </tr>
         {% endif %}

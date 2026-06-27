@@ -123,14 +123,16 @@ def make_badge(theme: dict) -> str:
 def main():
     parser = argparse.ArgumentParser(description="Generate SVG decorative elements for a newsletter")
     parser.add_argument("topic", help="Newsletter topic (used to auto-detect color theme)")
+    parser.add_argument("--title", default=None, help="Display title for the header banner (defaults to topic if omitted)")
     parser.add_argument("--theme", choices=list(THEMES.keys()), default=None, help="Override auto-detected theme")
     args = parser.parse_args()
 
     theme = THEMES[args.theme] if args.theme else detect_theme(args.topic)
+    banner_title = args.title if args.title else args.topic
     print(f"Using theme: {theme['primary']} / {theme['secondary']}")
 
     elements = {
-        "header_banner_png_b64": make_header_banner_png_b64(args.topic, theme),
+        "header_banner_png_b64": make_header_banner_png_b64(banner_title, theme),
         "divider": make_divider(theme),
         "badge": make_badge(theme),
         "theme": theme,
