@@ -172,18 +172,14 @@ The `series/` directory contains JSON configs for planned newsletter series. The
 ### Directory structure
 ```
 series/
-  README.md                          # Schema reference and copy-paste template
-  engineering-leadership-ai.json     # "Engineering Leadership in the AI Era" — 7 parts
+  README.md                   # Schema reference and copy-paste template
+  _template.json              # Blank series config to duplicate for new series
+  <your-series-name>.json     # Campaign-specific — gitignored; create per series
 
 context/
-  README.md                          # Usage guide and copy-paste template for context files
-  series-overview.md                 # Part 0: overview and series intro
-  series-deep-dive-1-agentic-teams.md
-  series-deep-dive-2-harnesses.md
-  series-deep-dive-3-guardrails.md
-  series-deep-dive-4-code-quality.md
-  series-deep-dive-5-security.md
-  series-deep-dive-6-cost.md
+  README.md                   # Usage guide and copy-paste template for context files
+  _template.md                # Blank context file to duplicate for new parts
+  <your-context-file>.md      # Campaign-specific — gitignored; create per part
 ```
 
 ### How to run a series part
