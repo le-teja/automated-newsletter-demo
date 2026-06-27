@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>{{ topic }}</title>
+  <style>
+    /* Reset */
+    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
+    body { margin: 0; padding: 0; background-color: #F8FAFC; font-family: Georgia, 'Times New Roman', serif; }
+
+    /* Layout */
+    .wrapper { width: 100%; background-color: #F8FAFC; }
+    .container { max-width: 600px; margin: 0 auto; background-color: #FFFFFF; }
+    .content-cell { padding: 32px 40px; }
+
+    /* Typography */
+    h1 { color: #1E293B; font-size: 26px; line-height: 1.3; margin: 0 0 16px 0; font-family: Georgia, serif; }
+    h2 { color: #1E293B; font-size: 20px; line-height: 1.3; margin: 28px 0 12px 0; font-family: Georgia, serif; }
+    p { color: #374151; font-size: 16px; line-height: 1.7; margin: 0 0 16px 0; font-family: Arial, sans-serif; }
+    a { color: #2563EB; text-decoration: underline; }
+    ul { margin: 0 0 16px 0; padding-left: 20px; }
+    li { color: #374151; font-size: 15px; line-height: 1.7; margin-bottom: 6px; font-family: Arial, sans-serif; }
+
+    /* Components */
+    .preheader { font-size: 0; max-height: 0; overflow: hidden; mso-hide: all; }
+    .header-img { display: block; width: 100%; max-width: 600px; }
+    .hero-img { display: block; width: 100%; max-width: 600px; border-radius: 6px; }
+    .chart-img { display: block; width: 100%; max-width: 520px; margin: 16px auto; border-radius: 4px; }
+    .divider { display: block; width: 100%; margin: 20px 0; }
+    .takeaways-box { background-color: #EFF6FF; border-left: 4px solid #2563EB; padding: 20px 24px; margin: 24px 0; border-radius: 0 6px 6px 0; }
+    .takeaways-box h2 { color: #1E40AF; margin-top: 0; font-size: 17px; }
+    .badge { display: inline-block; margin-bottom: 8px; }
+    .sources-section { border-top: 1px solid #E2E8F0; padding-top: 20px; margin-top: 28px; }
+    .sources-section p { color: #6B7280; font-size: 13px; }
+    .sources-section a { color: #6B7280; font-size: 13px; }
+    .footer { background-color: #1E293B; padding: 24px 40px; text-align: center; }
+    .footer p { color: #94A3B8; font-size: 13px; margin: 0; font-family: Arial, sans-serif; }
+    .footer a { color: #93C5FD; font-size: 13px; }
+
+    /* Quick-digest variant */
+    .digest-section h2 { font-size: 17px; margin-bottom: 8px; }
+    .digest-section ul { margin-top: 4px; }
+
+    /* Data-heavy variant */
+    .data-stat { font-size: 36px; font-weight: bold; color: #2563EB; line-height: 1; margin: 0 0 4px 0; font-family: Arial, sans-serif; }
+    .data-label { font-size: 13px; color: #6B7280; margin: 0 0 12px 0; font-family: Arial, sans-serif; }
+
+    /* Dark mode (Apple Mail) */
+    @media (prefers-color-scheme: dark) {
+      .wrapper { background-color: #0F172A !important; }
+      .container { background-color: #1E293B !important; }
+      h1, h2 { color: #F1F5F9 !important; }
+      p, li { color: #CBD5E1 !important; }
+      .takeaways-box { background-color: #1E3A5F !important; }
+      .footer { background-color: #0F172A !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Preheader: hidden text for inbox preview -->
+<div class="preheader" style="font-size:0;max-height:0;overflow:hidden;mso-hide:all;">{{ preheader }}&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</div>
+
+<table class="wrapper" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+  <tr>
+    <td align="center" style="padding: 20px 0;">
+
+      <table class="container" width="600" cellpadding="0" cellspacing="0" role="presentation" style="max-width:600px;width:100%;">
+
+        <!-- Header Banner (SVG) -->
+        <tr>
+          <td>
+            {% if header_banner_svg %}
+            {{ header_banner_svg | safe }}
+            {% endif %}
+          </td>
+        </tr>
+
+        <!-- Newsletter Title -->
+        <tr>
+          <td style="padding: 28px 40px 4px 40px; text-align: center;">
+            <h1 style="color: #1E293B; font-size: 30px; font-weight: bold; line-height: 1.3; margin: 0; font-family: Georgia, 'Times New Roman', serif; text-align: center;">{{ topic }}</h1>
+          </td>
+        </tr>
+
+        <!-- Hero Image -->
+        {% if hero_image_b64 %}
+        <tr>
+          <td style="padding: 0;">
+            <img src="data:image/png;base64,{{ hero_image_b64 }}" alt="{{ topic }} illustration" class="hero-img" width="600" />
+          </td>
+        </tr>
+        {% endif %}
+
+        <!-- Main Content -->
+        <tr>
+          <td class="content-cell" style="padding: 32px 40px;">
+
+            <!-- Intro -->
+            {% if variant == 'data-heavy' and sections %}
+              {% set first_dp = namespace(found=false, val='', unit='', label='') %}
+              {% for s in sections %}
+                {% if not first_dp.found %}
+                  {% for dp in s.data_points %}
+                    {% if not first_dp.found and dp.value is number %}
+                      {% set first_dp.found = true %}
+                      {% set first_dp.val = dp.value %}
+                      {% set first_dp.unit = dp.unit %}
+                      {% set first_dp.label = dp.label %}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+              {% endfor %}
+              {% if first_dp.found %}
+              <p class="data-stat" style="font-size:36px;font-weight:bold;color:#2563EB;line-height:1;margin:0 0 4px 0;font-family:Arial,sans-serif;">{{ first_dp.val }}{{ first_dp.unit }}</p>
+              <p class="data-label" style="font-size:13px;color:#6B7280;margin:0 0 16px 0;font-family:Arial,sans-serif;">{{ first_dp.label }}</p>
+              {% endif %}
+            {% endif %}
+
+            <p style="color:#374151;font-size:16px;line-height:1.7;margin:0 0 16px 0;font-family:Arial,sans-serif;">{{ intro | replace('\n', '</p><p style="color:#374151;font-size:16px;line-height:1.7;margin:0 0 16px 0;font-family:Arial,sans-serif;">') | safe }}</p>
+
+            <!-- Chart (if available) -->
+            {% if chart_b64 %}
+            <img src="data:image/png;base64,{{ chart_b64 }}" alt="Data chart" class="chart-img" width="520" style="display:block;width:100%;max-width:520px;margin:16px auto;border-radius:4px;" />
+            {% endif %}
+
+            <!-- Sections -->
+            {% for section in sections %}
+
+            {% if divider_svg %}
+            {{ divider_svg | safe }}
+            {% endif %}
+
+            <h2 style="color:#1E293B;font-size:20px;line-height:1.3;margin:28px 0 12px 0;font-family:Georgia,serif;">{{ section.heading }}</h2>
+
+            {% if variant == 'quick-digest' %}
+              <!-- Quick digest: bullet-heavy -->
+              {% set sentences = section.body.split('. ') %}
+              <ul style="margin:0 0 16px 0;padding-left:20px;">
+                {% for sentence in sentences %}
+                  {% if sentence | trim %}
+                  <li style="color:#374151;font-size:15px;line-height:1.7;margin-bottom:6px;font-family:Arial,sans-serif;">{{ sentence | trim }}{% if not sentence.endswith('.') %}.{% endif %}</li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            {% else %}
+              <!-- Long-form / data-heavy: paragraph -->
+              {% if variant == 'data-heavy' and section.data_points %}
+                {% for dp in section.data_points %}
+                  {% if dp.value is number %}
+                  <p class="data-stat" style="font-size:28px;font-weight:bold;color:#2563EB;line-height:1;margin:0 0 2px 0;font-family:Arial,sans-serif;">{{ dp.value }}{{ dp.unit }}</p>
+                  <p class="data-label" style="font-size:12px;color:#6B7280;margin:0 0 10px 0;font-family:Arial,sans-serif;">{{ dp.label }}</p>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+              <p style="color:#374151;font-size:16px;line-height:1.7;margin:0 0 16px 0;font-family:Arial,sans-serif;">{{ section.body | replace('\n', '</p><p style="color:#374151;font-size:16px;line-height:1.7;margin:0 0 16px 0;font-family:Arial,sans-serif;">') | safe }}</p>
+            {% endif %}
+
+            {% endfor %}
+
+            <!-- Takeaways Box -->
+            {% if takeaways %}
+            <div class="takeaways-box" style="background-color:#EFF6FF;border-left:4px solid #2563EB;padding:20px 24px;margin:24px 0;border-radius:0 6px 6px 0;">
+              {% if badge_svg %}{{ badge_svg | safe }}{% endif %}
+              <h2 style="color:#1E40AF;margin:8px 0 12px 0;font-size:17px;font-family:Georgia,serif;">Key Takeaways</h2>
+              <ul style="margin:0;padding-left:20px;">
+                {% for t in takeaways %}
+                <li style="color:#1E3A5F;font-size:15px;line-height:1.7;margin-bottom:6px;font-family:Arial,sans-serif;">{{ t }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+
+            <!-- Sources -->
+            {% if sources %}
+            <div class="sources-section" style="border-top:1px solid #E2E8F0;padding-top:20px;margin-top:28px;">
+              <p style="color:#6B7280;font-size:13px;margin:0 0 8px 0;font-family:Arial,sans-serif;font-weight:bold;">Sources</p>
+              {% for source in sources %}
+              <p style="color:#6B7280;font-size:13px;margin:0 0 4px 0;font-family:Arial,sans-serif;">
+                <a href="{{ source.url }}" style="color:#6B7280;font-size:13px;" target="_blank">{{ source.title }}</a>
+              </p>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td class="footer" style="background-color:#1E293B;padding:24px 40px;text-align:center;">
+            <p style="color:#94A3B8;font-size:13px;margin:0 0 8px 0;font-family:Arial,sans-serif;">You're receiving this because you subscribed.</p>
+            <p style="color:#94A3B8;font-size:13px;margin:0;font-family:Arial,sans-serif;">
+              <a href="mailto:{{ sender_email }}?subject=Unsubscribe" style="color:#93C5FD;font-size:13px;">Unsubscribe</a>
+            </p>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

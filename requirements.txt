@@ -1,1 +1,12 @@
 python-dotenv
+tavily-python
+requests
+beautifulsoup4
+readability-lxml
+google-genai
+jinja2
+css-inline
+matplotlib
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib

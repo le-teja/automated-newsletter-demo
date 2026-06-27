@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python *)",
+      "Bash(pip *)",
+      "Bash(pip3 *)",
+      "Bash(python3 *)",
+      "Bash(mkdir *)",
+      "PowerShell(python *)",
+      "PowerShell(pip *)",
+      "PowerShell(pip3 *)",
+      "PowerShell(python3 *)",
+      "PowerShell(mkdir *)",
+      "PowerShell(cd *)",
+      "PowerShell(*)"
+    ]
+  }
+}

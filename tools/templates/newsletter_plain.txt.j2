@@ -1,0 +1,45 @@
+{# Subject line options printed as reference header — not part of the email body #}
+{# SUBJECT LINE OPTIONS (pick one before sending):
+{% for s in subject_lines %}
+  {{ loop.index }}. {{ s }}
+{% endfor %}
+#}
+
+{{ topic | upper }}
+{{ '=' * (topic | length) }}
+
+{{ intro }}
+
+
+{% for section in sections %}
+{{ section.heading | upper }}
+{{ '-' * (section.heading | length) }}
+
+{{ section.body }}
+
+{% if section.data_points %}
+{% for dp in section.data_points %}
+  - {{ dp.label }}: {{ dp.value }}{{ dp.unit }}
+{% endfor %}
+
+{% endif %}
+{% endfor %}
+
+KEY TAKEAWAYS
+-------------
+{% for t in takeaways %}
+* {{ t }}
+{% endfor %}
+
+
+SOURCES
+-------
+{% for source in sources %}
+- {{ source.title }}
+  {{ source.url }}
+{% endfor %}
+
+
+--
+You're receiving this because you subscribed.
+To unsubscribe, reply with "unsubscribe" in the subject line.
