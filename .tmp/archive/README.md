@@ -6,10 +6,10 @@ Archived past newsletter runs, organized by date and topic.
 
 ```
 .tmp/archive/
-  2026-06-27_engineering-leadership-overview/
+  2026-06-27_your-topic-slug/
     newsletter.html
     newsletter_plain.txt
-  2026-07-04_engineering-leadership-agentic-teams/
+  2026-07-04_your-next-topic-slug/
     newsletter.html
     newsletter_plain.txt
 ```
