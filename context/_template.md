@@ -1,5 +1,5 @@
 # Context File Template
-# Rename this file before filling it in: [series-slug]-[issue-slug].md
+# Rename this file before filling it in: [series-slug]-[part-slug].md
 # Delete this header comment block when done.
 #
 # All four sections below are optional — use whichever are relevant.
@@ -7,14 +7,14 @@
 
 ## Series framing
 <!-- Is this a standalone newsletter or part of a series?
-     If part of a series: what issue number is this, what did prior issues cover,
+     If part of a series: what part number is this, what did prior parts cover,
      and how should this one reference them? -->
 
-This newsletter [stands alone / is Issue #N in the "[Series Name]" series].
+This newsletter [stands alone / is Part #N in the "[Series Name]" series].
 
-<!-- Example for a series issue:
-The previous issue (Issue #N-1) covered [topic] (subject line: "[exact subject line]").
-Reference it briefly in the intro — one sentence — then move into this issue's topic.
+<!-- Example for a series part:
+The previous part (Part #N-1) covered [topic] (subject line: "[exact subject line]").
+Reference it briefly in the intro — one sentence — then move into this part's topic.
 -->
 
 ## Tone and specificity

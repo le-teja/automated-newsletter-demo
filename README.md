@@ -1,4 +1,4 @@
-# Newsletters Demo
+# Automated Newsletter Platform
 
 An AI-powered newsletter pipeline built on the WAT framework (Workflows, Agents, Tools). You give it a topic — or a series config — and it researches, writes, renders, and sends a polished email newsletter to your subscriber list. Zero cost beyond free API tiers.
 
@@ -26,18 +26,18 @@ Same as above, but the context file injects editorial guidance into the synthesi
 
 ---
 
-### Series issue
-> "Run issue #[N] from `series/[series-file].json`"
+### Run a multipart Newsletter
+> "Run part #[N] from `series/[series-file].json`"
 
-The agent reads the series config, picks the right topic and context file, and runs the pipeline. After sending, it updates the issue status in the JSON.
+The agent reads the series config, picks the right topic and context file, and runs the pipeline. After sending, it updates the part status in the JSON.
 
-> "Run issue #0 from `series/engineering-leadership-ai.json`"
-> "Run the next pending issue from `series/engineering-leadership-ai.json`"
+> "Run part #0 from `series/engineering-leadership-ai.json`"
+> "Run the next pending part from `series/engineering-leadership-ai.json`"
 
 ---
 
 ### Preview / dry run (don't send)
-> "Run issue #1 from `series/engineering-leadership-ai.json` but don't send — just show me the plain text"
+> "Run part #1 from `series/engineering-leadership-ai.json` but don't send — just show me the plain text"
 > "Generate a newsletter on [topic] and stop before sending"
 
 The pipeline runs through render. You review `output/newsletter_plain.txt` before committing to send.
@@ -66,7 +66,7 @@ Moves the current `.tmp/output/` files to a dated archive folder so the next run
 | `workflows/` | Markdown SOPs — step-by-step instructions the agent follows |
 | `tools/` | Python scripts that do the actual work (search, scrape, synthesize, render, send) |
 | `context/` | Editorial context files — injected into the synthesis prompt via `--context` |
-| `series/` | Series config JSONs — define multi-issue newsletter sequences |
+| `series/` | Series config JSONs — define multi-part newsletter sequences |
 | `.tmp/` | Temporary processing files — regenerated each run, disposable |
 | `.tmp/output/` | The rendered newsletter (HTML + plain text) ready to send |
 | `.tmp/archive/` | Archived past runs, organized by date and topic |
@@ -105,10 +105,3 @@ Create a Google Sheet with:
 
 Copy the Sheet ID from the URL and set it as `GOOGLE_SHEETS_SUBSCRIBER_ID` in `.env`.
 
----
-
-## Active series
-
-| Series | Config file | Issues | Next issue |
-|--------|------------|--------|-----------|
-| Engineering Leadership in the AI Era | `series/engineering-leadership-ai.json` | 7 (Issue 0–6) | Issue 0 — Overview |

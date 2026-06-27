@@ -10,7 +10,7 @@ Use them to control tone, specificity, series framing, required tools or links, 
 
 | Situation | What to put in the context file |
 |-----------|--------------------------------|
-| Series newsletter | Series name, issue number, what previous issues covered, how to reference them |
+| Series newsletter | Series name, part number, what previous parts covered, how to reference them |
 | Opinionated deep-dive | Specific tools to name, real links to include, "be opinionated, no hedging" |
 | Audience-specific | Role (CTO vs IC), assumed knowledge level, what to skip |
 | Tone change | "Lead with a stat", "use a cautionary tone", "write for a skeptical reader" |
@@ -24,7 +24,7 @@ A context file is plain markdown. Use any subset of these four sections:
 
 ```markdown
 ## Series framing
-[Where this sits in a series. What prior issues covered. How to reference them.]
+[Where this sits in a series. What prior parts covered. How to reference them.]
 
 ## Tone and specificity
 [Voice, level of opinion, how to handle hedging, link inclusion requirements.]
@@ -42,8 +42,8 @@ A context file is plain markdown. Use any subset of these four sections:
 
 ```markdown
 ## Series framing
-This newsletter stands alone / is Issue #N in the "[Series Name]" series.
-[If part of a series: "The previous issue covered X (subject line: 'Y'). Reference it once in the intro, then move on."]
+This newsletter stands alone / is Part #N in the "[Series Name]" series.
+[If part of a series: "The previous part covered X (subject line: 'Y'). Reference it once in the intro, then move on."]
 
 ## Tone and specificity
 - Be opinionated. Take clear positions. Don't hedge with "consider" or "you might want to."
@@ -69,8 +69,8 @@ This newsletter stands alone / is Issue #N in the "[Series Name]" series.
 **Standalone newsletter with editorial context:**
 > "Generate a newsletter on [topic] using `context/my-context.md`"
 
-**Series issue:**
-> "Run issue #2 from `series/my-series.json`"
+**Series part:**
+> "Run part #2 from `series/my-series.json`"
 (The agent reads the series config, finds the `context_file` field, and passes it automatically.)
 
 **Manual CLI:**
@@ -84,11 +84,11 @@ python tools/synthesize_newsletter.py "Your topic here" .tmp/scraped_articles.js
 
 ## Naming convention
 
-Use descriptive kebab-case filenames that reflect the series and issue:
+Use descriptive kebab-case filenames that reflect the series and part:
 ```
-[series-slug]-[issue-slug].md
+[series-slug]-[part-slug].md
 ```
-Examples: `eng-leadership-overview.md`, `saas-metrics-issue-3-churn.md`
+Examples: `eng-leadership-overview.md`, `saas-metrics-part-3-churn.md`
 
 ## Files in this directory
 

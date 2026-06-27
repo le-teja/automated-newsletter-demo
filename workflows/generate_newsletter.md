@@ -173,11 +173,11 @@ The `series/` directory contains JSON configs for planned newsletter series. The
 ```
 series/
   README.md                          # Schema reference and copy-paste template
-  engineering-leadership-ai.json     # "Engineering Leadership in the AI Era" — 7 issues
+  engineering-leadership-ai.json     # "Engineering Leadership in the AI Era" — 7 parts
 
 context/
   README.md                          # Usage guide and copy-paste template for context files
-  series-overview.md                 # Issue 0: overview and series intro
+  series-overview.md                 # Part 0: overview and series intro
   series-deep-dive-1-agentic-teams.md
   series-deep-dive-2-harnesses.md
   series-deep-dive-3-guardrails.md
@@ -186,9 +186,9 @@ context/
   series-deep-dive-6-cost.md
 ```
 
-### How to run a series issue
+### How to run a series part
 
-1. Read the series JSON — find the first issue with `"status": "pending"`.
+1. Read the series JSON — find the first part with `"status": "pending"`.
 2. Run the standard pipeline (Steps 0–4) using the `topic` field from the config.
    - If Step 2 (search) yields fewer than 4 real articles, retry with `search_queries[1]`.
 3. Run synthesis with the context file:
@@ -198,7 +198,7 @@ context/
      --context <context_file from config>
    ```
 4. Continue with Steps 6–10 (chart, SVG, image, render, send) as normal.
-5. After sending, update the series JSON for that issue:
+5. After sending, update the series JSON for that part:
    - `"status"` → `"sent"`
    - `"subject_line_chosen"` → the chosen subject line
    - `"sent_date"` → today's date (YYYY-MM-DD)
