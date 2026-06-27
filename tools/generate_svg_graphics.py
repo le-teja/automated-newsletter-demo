@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""Generate SVG decorative elements for the newsletter (header banner, dividers, badge)."""
+"""Generate decorative elements for the newsletter (header banner PNG, SVG dividers/badge)."""
 
 import argparse
+import base64
+import io
 import json
 import os
 
@@ -34,38 +36,72 @@ def detect_theme(topic: str) -> dict:
     return THEMES["default"]
 
 
-def make_header_banner(title: str, theme: dict) -> str:
-    safe_title = title.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-    words = safe_title.split()
-    # Wrap long titles onto two lines
-    if len(safe_title) > 45:
-        mid = len(words) // 2
-        line1 = " ".join(words[:mid])
-        line2 = " ".join(words[mid:])
-        text_block = f"""
-    <text x="300" y="52" font-family="Georgia, serif" font-size="22" font-weight="bold"
-          fill="#FFFFFF" text-anchor="middle">{line1}</text>
-    <text x="300" y="78" font-family="Georgia, serif" font-size="22" font-weight="bold"
-          fill="#FFFFFF" text-anchor="middle">{line2}</text>"""
-    else:
-        text_block = f"""
-    <text x="300" y="65" font-family="Georgia, serif" font-size="26" font-weight="bold"
-          fill="#FFFFFF" text-anchor="middle">{safe_title}</text>"""
+def _hex_to_rgb(hex_color: str) -> tuple:
+    h = hex_color.lstrip("#")
+    return tuple(int(h[i:i+2], 16) for i in (0, 2, 4))
 
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="600" height="120" viewBox="0 0 600 120">
-  <defs>
-    <linearGradient id="hg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:{theme['primary']};stop-opacity:1" />
-      <stop offset="100%" style="stop-color:{theme['secondary']};stop-opacity:1" />
-    </linearGradient>
-  </defs>
-  <rect width="600" height="120" rx="8" fill="url(#hg)" />
-  <circle cx="30" cy="30" r="60" fill="{theme['accent']}" fill-opacity="0.15" />
-  <circle cx="570" cy="90" r="50" fill="{theme['accent']}" fill-opacity="0.10" />
-  {text_block}
-  <text x="300" y="100" font-family="Arial, sans-serif" font-size="11" fill="{theme['accent']}"
-        text-anchor="middle" letter-spacing="3">NEWSLETTER</text>
-</svg>"""
+
+def make_header_banner_png_b64(title: str, theme: dict) -> str:
+    """Render the header banner as a base64-encoded PNG using Pillow.
+    Gmail strips inline SVG, so we rasterize to a PNG that embeds safely as <img>."""
+    from PIL import Image, ImageDraw, ImageFont
+
+    W, H = 1200, 240  # 2x for retina; displayed at 600x120
+    img = Image.new("RGB", (W, H))
+    draw = ImageDraw.Draw(img)
+
+    # Horizontal gradient: primary (left) → secondary (right)
+    c1 = _hex_to_rgb(theme["primary"])
+    c2 = _hex_to_rgb(theme["secondary"])
+    for x in range(W):
+        t = x / W
+        r = int(c1[0] + (c2[0] - c1[0]) * t)
+        g = int(c1[1] + (c2[1] - c1[1]) * t)
+        b = int(c1[2] + (c2[2] - c1[2]) * t)
+        draw.line([(x, 0), (x, H)], fill=(r, g, b))
+
+    # Decorative circles (accent, low opacity)
+    accent = _hex_to_rgb(theme["accent"])
+    overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    odraw = ImageDraw.Draw(overlay)
+    odraw.ellipse((-80, -80, 200, 200), fill=(*accent, 38))   # top-left, 0.15 opacity
+    odraw.ellipse((1060, 100, 1260, 300), fill=(*accent, 26))  # bottom-right, 0.10 opacity
+    img = Image.alpha_composite(img.convert("RGBA"), overlay).convert("RGB")
+    draw = ImageDraw.Draw(img)
+
+    # Text: wrap onto two lines if long
+    words = title.split()
+    if len(title) > 40:
+        mid = len(words) // 2
+        lines = [" ".join(words[:mid]), " ".join(words[mid:])]
+        font_size = 52
+    else:
+        lines = [title]
+        font_size = 60
+
+    # Use default font (no external font required)
+    try:
+        font = ImageFont.truetype("arial.ttf", font_size)
+    except Exception:
+        try:
+            font = ImageFont.truetype("DejaVuSans-Bold.ttf", font_size)
+        except Exception:
+            font = ImageFont.load_default()
+
+    total_h = len(lines) * (font_size + 8)
+    y_start = (H - total_h) // 2
+    for i, line in enumerate(lines):
+        bbox = draw.textbbox((0, 0), line, font=font)
+        tw = bbox[2] - bbox[0]
+        x = (W - tw) // 2
+        y = y_start + i * (font_size + 8)
+        # Subtle shadow
+        draw.text((x + 2, y + 2), line, font=font, fill=(0, 0, 0, 80))
+        draw.text((x, y), line, font=font, fill=(255, 255, 255))
+
+    buf = io.BytesIO()
+    img.save(buf, format="PNG", optimize=True)
+    return base64.b64encode(buf.getvalue()).decode("ascii")
 
 
 def make_divider(theme: dict) -> str:
@@ -94,7 +130,7 @@ def main():
     print(f"Using theme: {theme['primary']} / {theme['secondary']}")
 
     elements = {
-        "header_banner": make_header_banner(args.topic, theme),
+        "header_banner_png_b64": make_header_banner_png_b64(args.topic, theme),
         "divider": make_divider(theme),
         "badge": make_badge(theme),
         "theme": theme,

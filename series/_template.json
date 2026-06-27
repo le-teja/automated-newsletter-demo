@@ -1,0 +1,35 @@
+{
+  "_instructions": "Rename this file to [series-slug].json before filling it in. Delete this _instructions field when done. Series configs are gitignored — they live on disk but are not committed.",
+  "series_name": "Your Series Name",
+  "description": "One sentence: who is this series for and what does it cover.",
+  "issues": [
+    {
+      "issue_number": 0,
+      "title": "Overview — Setting the Stage",
+      "topic": "Full topic phrase for the intro/overview issue — write as a complete sentence, not just keywords",
+      "search_queries": [
+        "specific primary search query — most targeted",
+        "broader fallback query — used if primary yields fewer than 4 good articles"
+      ],
+      "context_file": "context/[series-slug]-overview.md",
+      "variant": "long-form",
+      "status": "pending",
+      "subject_line_chosen": null,
+      "sent_date": null
+    },
+    {
+      "issue_number": 1,
+      "title": "First Deep-Dive Topic",
+      "topic": "Full topic phrase for issue 1",
+      "search_queries": [
+        "specific primary search query",
+        "broader fallback query"
+      ],
+      "context_file": "context/[series-slug]-issue-1-[topic-slug].md",
+      "variant": "long-form",
+      "status": "pending",
+      "subject_line_chosen": null,
+      "sent_date": null
+    }
+  ]
+}

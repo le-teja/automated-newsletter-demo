@@ -6,7 +6,8 @@ import json
 import os
 import sys
 
-OUTPUT_PATH = os.path.join(os.path.dirname(__file__), "..", ".tmp", "chart.png")
+OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", ".tmp")
+OUTPUT_PATH = os.path.join(OUTPUT_DIR, "chart.png")  # legacy single-chart path
 
 # Email-safe palette: works on light backgrounds, readable without color inversion
 COLORS = ["#2563EB", "#7C3AED", "#059669", "#D97706", "#DC2626", "#0891B2"]
@@ -26,6 +27,20 @@ def collect_data_points(sections: list[dict]) -> list[dict]:
                     "unit": dp.get("unit", ""),
                 })
     return points
+
+
+def collect_data_points_by_section(sections: list[dict]) -> dict:
+    """Return {section_index: [data_points]} for sections that have numeric data."""
+    result = {}
+    for i, section in enumerate(sections):
+        points = [
+            {"label": dp.get("label", ""), "value": dp["value"], "unit": dp.get("unit", "")}
+            for dp in section.get("data_points", [])
+            if isinstance(dp.get("value"), (int, float))
+        ]
+        if points:
+            result[i] = points
+    return result
 
 
 def detect_chart_type(points: list[dict]) -> str:
@@ -145,23 +160,39 @@ def main():
     with open(args.content_json, encoding="utf-8") as f:
         content = json.load(f)
 
-    points = collect_data_points(content.get("sections", []))
+    sections = content.get("sections", [])
+    by_section = collect_data_points_by_section(sections)
 
-    if not points:
+    if not by_section:
         print("NO_DATA")
         sys.exit(0)
 
-    chart_type = args.chart_type if args.chart_type != "auto" else detect_chart_type(points)
-    print(f"Rendering {chart_type} chart with {len(points)} data points")
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
+    # Generate one chart per section that has data; also write the legacy chart.png
+    # (first section's chart) so callers using --chart still work.
+    chart_map = {}  # {section_index: output_path}
+    for idx, points in by_section.items():
+        path = os.path.join(OUTPUT_DIR, f"chart_section_{idx}.png")
+        chart_type = args.chart_type if args.chart_type != "auto" else detect_chart_type(points)
+        print(f"Section {idx}: rendering {chart_type} chart with {len(points)} data points")
+        if chart_type == "donut":
+            render_donut_chart(points, path)
+        else:
+            render_bar_chart(points, path)
+        print(f"  Saved to {path}")
+        chart_map[idx] = path
 
-    if chart_type == "donut":
-        render_donut_chart(points, OUTPUT_PATH)
-    else:
-        render_bar_chart(points, OUTPUT_PATH)
+    # Write legacy chart.png as a copy of the first chart for backwards compatibility
+    first_path = next(iter(chart_map.values()))
+    import shutil
+    shutil.copy2(first_path, OUTPUT_PATH)
 
-    print(f"Chart saved to {OUTPUT_PATH}")
+    # Write chart map JSON so render_newsletter.py can place charts per-section
+    map_path = os.path.join(OUTPUT_DIR, "chart_map.json")
+    with open(map_path, "w", encoding="utf-8") as f:
+        json.dump({str(k): v for k, v in chart_map.items()}, f, indent=2)
+    print(f"Chart map saved to {map_path}")
 
 
 if __name__ == "__main__":

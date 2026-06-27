@@ -6,3 +6,10 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+
+# Campaign-specific content (gitignored like .tmp/output — regenerable artifacts)
+context/*.md
+!context/README.md
+!context/_template.md
+series/*.json
+!series/_template.json

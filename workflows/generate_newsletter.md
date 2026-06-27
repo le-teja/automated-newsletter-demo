@@ -74,6 +74,14 @@ python tools/synthesize_newsletter.py "$TOPIC" .tmp/scraped_articles.json --vari
 ```
 Output: `.tmp/newsletter_content.json` containing subject lines (3 variants), preheader, intro, sections (with optional data_points), takeaways, sources, and an image prompt.
 
+For series newsletters or any newsletter needing custom editorial direction, pass a context file:
+```
+python tools/synthesize_newsletter.py "$TOPIC" .tmp/scraped_articles.json \
+  --variant long-form \
+  --context context/my-context.md
+```
+The `--context` flag is optional. When omitted, the pipeline behaves exactly as before. See `context/README.md` for how to write context files.
+
 Uses Gemini 2.5 Flash (free tier: 1,500 requests/day). Retries once if JSON output is malformed.
 
 **6. Generate data chart**
@@ -156,3 +164,45 @@ python tools/send_via_gmail.py ... --dry-run
 **Subscriber list format:** Column A = email, Column B = name, Column C = "active" or "unsubscribed". Row 1 is the header (skipped). Add new subscribers by appending rows with `active` in column C.
 
 **CSS inlining:** If `css-inline` is not installed, styles won't be inlined and some email clients (Gmail web) will strip them. Run `pip install css-inline` to fix. It's in `requirements.txt` — this only happens if you skipped `pip install -r requirements.txt`.
+
+## Series Newsletters
+
+The `series/` directory contains JSON configs for planned newsletter series. The `context/` directory contains the editorial guidance files they reference.
+
+### Directory structure
+```
+series/
+  README.md                          # Schema reference and copy-paste template
+  engineering-leadership-ai.json     # "Engineering Leadership in the AI Era" — 7 issues
+
+context/
+  README.md                          # Usage guide and copy-paste template for context files
+  series-overview.md                 # Issue 0: overview and series intro
+  series-deep-dive-1-agentic-teams.md
+  series-deep-dive-2-harnesses.md
+  series-deep-dive-3-guardrails.md
+  series-deep-dive-4-code-quality.md
+  series-deep-dive-5-security.md
+  series-deep-dive-6-cost.md
+```
+
+### How to run a series issue
+
+1. Read the series JSON — find the first issue with `"status": "pending"`.
+2. Run the standard pipeline (Steps 0–4) using the `topic` field from the config.
+   - If Step 2 (search) yields fewer than 4 real articles, retry with `search_queries[1]`.
+3. Run synthesis with the context file:
+   ```
+   python tools/synthesize_newsletter.py "<topic>" .tmp/scraped_articles.json \
+     --variant long-form \
+     --context <context_file from config>
+   ```
+4. Continue with Steps 6–10 (chart, SVG, image, render, send) as normal.
+5. After sending, update the series JSON for that issue:
+   - `"status"` → `"sent"`
+   - `"subject_line_chosen"` → the chosen subject line
+   - `"sent_date"` → today's date (YYYY-MM-DD)
+
+### Design intent
+Series configs and context files are read by the agent (Claude Code), not by any script.
+This keeps the pipeline tools generic and the series logic in human-readable files that are easy to edit before each send.

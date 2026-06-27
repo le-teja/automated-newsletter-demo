@@ -1,13 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Skill(update-config)",
-      "Skill(update-config:*)",
-      "PowerShell(cd \"c:\\\\Users\\\\saite\\\\Desktop\\\\Labs\\\\Newsletters Demo\"; python tools/cache_research.py --check \"current state of software engineering trends future roadmap pre-AI era developer\"; echo \"Exit: $LASTEXITCODE\")",
-      "PowerShell(cd \"c:\\\\Users\\\\saite\\\\Desktop\\\\Labs\\\\Newsletters Demo\"; Get-ChildItem .tmp -Recurse | Where-Object { -not $_.PSIsContainer } | Select-Object FullName, Length, LastWriteTime | Format-Table -AutoSize)",
-      "PowerShell(cd \"c:\\\\Users\\\\saite\\\\Desktop\\\\Labs\\\\Newsletters Demo\"; if \\(-not \\(Test-Path .tmp/output/newsletter.html\\)\\) { $chart = if \\(Test-Path .tmp/chart.png\\) { \"--chart .tmp/chart.png\" } else { \"\" }; $hero = if \\(Test-Path .tmp/hero_image.png\\) { \"--hero .tmp/hero_image.png\" } else { \"\" }; $svg = if \\(Test-Path .tmp/svg_elements.json\\) { \"--svg .tmp/svg_elements.json\" } else { \"\" }; $cmd = \"python tools/render_newsletter.py .tmp/newsletter_content.json $chart $hero $svg --variant long-form\"; echo \"Running: $cmd\"; Invoke-Expression $cmd } else { echo \"HTML already rendered\" })",
-      "PowerShell(cd \"c:\\\\Users\\\\saite\\\\Desktop\\\\Labs\\\\Newsletters Demo\"; if \\(Test-Path .tmp/output/newsletter.html\\) { $s = \\(Get-Item .tmp/output/newsletter.html\\).Length; echo \"Final HTML: $\\([math]::Round\\($s/1024,1\\)\\) KB\" }; if \\(Test-Path .tmp/output/newsletter_plain.txt\\) { echo \"Plain text: ready\" })",
-      "PowerShell(cd \"c:\\\\Users\\\\saite\\\\Desktop\\\\Labs\\\\Newsletters Demo\"; python tools/archive_run.py check; echo \"Exit: $LASTEXITCODE\")"
+      "Bash(*)",
+      "PowerShell(*)"
     ]
   }
 }

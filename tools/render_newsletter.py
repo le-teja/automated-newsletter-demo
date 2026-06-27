@@ -38,9 +38,10 @@ def render_plain_text(content: dict) -> str:
     lines = []
 
     # Title
-    topic = content.get("topic", "Newsletter")
-    lines.append(topic.upper())
-    lines.append("=" * len(topic))
+    topic = content.get("topic", "")
+    if topic:
+        lines.append(topic.upper())
+        lines.append("=" * len(topic))
     lines.append("")
 
     # Intro
@@ -109,11 +110,20 @@ def main():
         content = json.load(f)
 
     # Infer topic from content or filename
-    topic = content.get("topic", "Newsletter")
+    topic = content.get("topic", "")
 
     svg = load_svg_elements(args.svg)
     hero_b64 = encode_image(args.hero)
-    chart_b64 = encode_image(args.chart)
+    chart_b64 = encode_image(args.chart)  # legacy single chart (kept for template fallback)
+
+    # Load per-section chart map if it exists alongside the chart
+    chart_map_b64 = {}
+    if args.chart:
+        map_path = os.path.join(os.path.dirname(args.chart), "chart_map.json")
+        if os.path.exists(map_path):
+            with open(map_path, encoding="utf-8") as f:
+                raw_map = json.load(f)
+            chart_map_b64 = {int(k): encode_image(v) for k, v in raw_map.items()}
 
     env = Environment(loader=FileSystemLoader(TEMPLATES_DIR), autoescape=False)
     template = env.get_template("newsletter.html.j2")
@@ -128,7 +138,8 @@ def main():
         sources=content.get("sources", []),
         hero_image_b64=hero_b64,
         chart_b64=chart_b64,
-        header_banner_svg=svg.get("header_banner"),
+        chart_map_b64=chart_map_b64,
+        header_banner_png_b64=svg.get("header_banner_png_b64"),
         divider_svg=svg.get("divider"),
         badge_svg=svg.get("badge"),
         sender_email=args.sender_email,

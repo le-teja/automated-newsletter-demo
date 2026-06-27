@@ -69,23 +69,16 @@
   <tr>
     <td align="center" style="padding: 20px 0;">
 
-      <table class="container" width="600" cellpadding="0" cellspacing="0" role="presentation" style="max-width:600px;width:100%;">
+      <table class="container" width="600" cellpadding="0" cellspacing="0" role="presentation" style="max-width:600px;width:100%;border-collapse:collapse;border-spacing:0;">
 
-        <!-- Header Banner (SVG) -->
+        <!-- Header Banner (PNG image — email-safe) -->
+        {% if header_banner_png_b64 %}
         <tr>
-          <td>
-            {% if header_banner_svg %}
-            {{ header_banner_svg | safe }}
-            {% endif %}
+          <td align="center" valign="top" width="600" style="padding:0;margin:0;line-height:0;font-size:0;border:0;">
+            <img src="data:image/png;base64,{{ header_banner_png_b64 }}" alt="{{ topic }}" width="600" height="120" style="display:block;width:100%;height:auto;border:0;outline:none;" />
           </td>
         </tr>
-
-        <!-- Newsletter Title -->
-        <tr>
-          <td style="padding: 28px 40px 4px 40px; text-align: center;">
-            <h1 style="color: #1E293B; font-size: 30px; font-weight: bold; line-height: 1.3; margin: 0; font-family: Georgia, 'Times New Roman', serif; text-align: center;">{{ topic }}</h1>
-          </td>
-        </tr>
+        {% endif %}
 
         <!-- Hero Image -->
         {% if hero_image_b64 %}
@@ -123,11 +116,6 @@
 
             <p style="color:#374151;font-size:16px;line-height:1.7;margin:0 0 16px 0;font-family:Arial,sans-serif;">{{ intro | replace('\n', '</p><p style="color:#374151;font-size:16px;line-height:1.7;margin:0 0 16px 0;font-family:Arial,sans-serif;">') | safe }}</p>
 
-            <!-- Chart (if available) -->
-            {% if chart_b64 %}
-            <img src="data:image/png;base64,{{ chart_b64 }}" alt="Data chart" class="chart-img" width="520" style="display:block;width:100%;max-width:520px;margin:16px auto;border-radius:4px;" />
-            {% endif %}
-
             <!-- Sections -->
             {% for section in sections %}
 
@@ -158,6 +146,11 @@
                 {% endfor %}
               {% endif %}
               <p style="color:#374151;font-size:16px;line-height:1.7;margin:0 0 16px 0;font-family:Arial,sans-serif;">{{ section.body | replace('\n', '</p><p style="color:#374151;font-size:16px;line-height:1.7;margin:0 0 16px 0;font-family:Arial,sans-serif;">') | safe }}</p>
+            {% endif %}
+
+            <!-- Per-section chart -->
+            {% if chart_map_b64 and loop.index0 in chart_map_b64 %}
+            <img src="data:image/png;base64,{{ chart_map_b64[loop.index0] }}" alt="Data chart" class="chart-img" width="520" style="display:block;width:100%;max-width:520px;margin:16px auto;border-radius:4px;" />
             {% endif %}
 
             {% endfor %}

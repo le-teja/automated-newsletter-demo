@@ -64,8 +64,7 @@ Rules:
 - preheader must be between 80 and 100 characters
 - subject_lines must have exactly 3 items
 - Return ONLY the JSON object, nothing else
-
-Research articles:
+{context_block}Research articles:
 {articles}"""
 
 
@@ -108,7 +107,20 @@ def main():
     parser.add_argument("articles_json", help="Path to scraped_articles.json")
     parser.add_argument("--model", default="gemini-2.5-flash", help="Gemini model to use")
     parser.add_argument("--variant", choices=["long-form", "quick-digest", "data-heavy"], default="long-form")
+    parser.add_argument("--context", default=None, metavar="FILE",
+                        help="Optional markdown file with editorial context injected into the prompt")
     args = parser.parse_args()
+
+    context_block = ""
+    if args.context:
+        ctx_path = os.path.abspath(args.context)
+        if not os.path.exists(ctx_path):
+            print(f"Error: context file not found: {ctx_path}", file=sys.stderr)
+            sys.exit(1)
+        with open(ctx_path, encoding="utf-8") as f:
+            ctx_text = f.read().strip()
+        if ctx_text:
+            context_block = f"\n\nEditorial context for this newsletter:\n{ctx_text}\n\n"
 
     if not os.environ.get("GOOGLE_AI_API_KEY"):
         print("Error: GOOGLE_AI_API_KEY not set in .env", file=sys.stderr)
@@ -126,6 +138,7 @@ def main():
     prompt = USER_PROMPT_TEMPLATE.format(
         topic=args.topic,
         variant_instruction=VARIANT_INSTRUCTIONS[args.variant],
+        context_block=context_block,
         articles=articles_text,
     )
 
